@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topic: Chance & Nature Test - Ms Ngoc Hai FTU</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary-bg-1: #8854C0;
+            --primary-bg-2: #FDCB6E;
+            --primary-bg-3: #00C9A7;
+            --primary-bg-4: #FF7675;
+            --correct-color: #00D26A;
+            --correct-shadow: #00A352;
+            --wrong-color: #FF4757;
+            --wrong-shadow: #D63031;
+            --selected-color: #6C5CE7;
+            --selected-shadow: #4834D4;
+            --card-bg: rgba(255, 255, 255, 0.96);
+            --text-color: #2D3436;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Nunito', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(-45deg, #8854C0, #FDCB6E, #00C9A7, #FF7675, #6C5CE7);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            position: relative;
+            padding: 20px 10px;
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* SVG Pattern Overlay */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><text x="15" y="35" font-size="22" opacity="0.3">⭐</text><text x="75" y="25" font-size="24" opacity="0.3">🌸</text><text x="95" y="85" font-size="20" opacity="0.3">🍓</text><text x="25" y="95" font-size="24" opacity="0.3">🐱</text><text x="60" y="60" font-size="22" opacity="0.3">☁️</text></svg>');
+            background-repeat: repeat;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 860px;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 12px 20px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+            border: 3px solid #FFF;
+        }
+
+        h1 {
+            font-size: 1.15rem;
+            font-weight: 900;
+            color: #6C5CE7;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .teacher-tag {
+            font-size: 0.82rem;
+            font-weight: 800;
+            color: #D63031;
+            background: #FFEAA7;
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 10px;
+            border: 2px solid #FDCB6E;
+            margin-top: 4px;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #FFF;
+            padding: 12px 20px;
+            border-radius: 18px;
+            box-shadow: 0 5px 0px #DFE6E9;
+            font-weight: 800;
+            font-size: 0.95rem;
+        }
+
+        .progress-container {
+            flex-grow: 1;
+            margin: 0 15px;
+            background: #DFE6E9;
+            height: 14px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00C9A7, #00D26A);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .filter-bar {
+            display: none;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-bar.active {
+            display: flex;
+        }
+
+        .filter-btn {
+            background: #FFF;
+            border: 3px solid #CBD5E1;
+            border-bottom: 5px solid #94A3B8;
+            border-radius: 14px;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: #475569;
+            cursor: pointer;
+        }
+
+        .filter-btn.active {
+            background: #6C5CE7;
+            border-color: #6C5CE7;
+            border-bottom-color: #4834D4;
+            color: #FFF;
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            border-radius: 22px;
+            padding: 22px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border: 4px solid #FFF;
+            transition: transform 0.2s, opacity 0.3s;
+        }
+
+        .question-card.hidden {
+            display: none;
+        }
+
+        .card-header-badge {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .badge-group {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .question-number {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #0984E3;
+            background: #E1F5FE;
+            padding: 3px 10px;
+            border-radius: 10px;
+        }
+
+        .level-indicator {
+            font-size: 0.78rem;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 8px;
+            text-transform: uppercase;
+        }
+
+        .level-easy { background: #E8F5E9; color: #2E7D32; }
+        .level-med { background: #FFF3E0; color: #EF6C00; }
+        .level-hard { background: #FFEBEE; color: #C62828; }
+
+        .type-badge {
+            font-size: 0.78rem;
+            font-weight: 800;
+            background: #F1F5F9;
+            color: #475569;
+            padding: 3px 8px;
+            border-radius: 8px;
+        }
+
+        .status-badge {
+            display: none;
+            font-size: 0.82rem;
+            font-weight: 900;
+            padding: 3px 10px;
+            border-radius: 10px;
+        }
+
+        .status-badge.correct {
+            display: inline-block;
+            background: #D1FAE5;
+            color: #059669;
+        }
+
+        .status-badge.wrong {
+            display: inline-block;
+            background: #FEE2E2;
+            color: #DC2626;
+        }
+
+        .question-text {
+            font-size: 1.08rem;
+            font-weight: 700;
+            color: #2D3436;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .gap-slot {
+            display: inline-block;
+            min-width: 90px;
+            padding: 2px 8px;
+            border-bottom: 3px dashed #6C5CE7;
+            color: #6C5CE7;
+            font-weight: 900;
+            text-align: center;
+            background: #F3E8FF;
+            border-radius: 8px;
+            margin: 0 4px;
+        }
+
+        .sale-sign-box {
+            background: linear-gradient(135deg, #FF7675, #D63031);
+            color: #FFF;
+            padding: 14px;
+            border-radius: 14px;
+            border: 3px dashed #FFF;
+            text-align: center;
+            font-weight: 900;
+            margin-bottom: 14px;
+            box-shadow: 0 4px 12px rgba(255, 118, 117, 0.4);
+            font-size: 0.98rem;
+        }
+
+        .phone-message-box {
+            background: #E8F5E9;
+            border: 2px solid #00C9A7;
+            border-radius: 16px;
+            padding: 12px 16px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 10px rgba(0, 201, 167, 0.15);
+        }
+
+        .phone-icon { font-size: 1.8rem; }
+        .phone-text { font-size: 0.95rem; font-weight: 800; color: #059669; }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 10px;
+        }
+
+        .option-btn {
+            background: #FFFFFF;
+            border: 3px solid #E2E8F0;
+            border-bottom: 6px solid #CBD5E1;
+            border-radius: 16px;
+            padding: 12px 14px;
+            font-size: 0.98rem;
+            font-weight: 800;
+            color: #475569;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            outline: none;
+        }
+
+        .option-btn:hover:not(.locked) {
+            transform: translateY(-2px);
+            border-color: #C7D2FE;
+            background: #F5F3FF;
+        }
+
+        .option-btn:active:not(.locked) {
+            transform: translateY(2px);
+            border-bottom-width: 3px;
+        }
+
+        .option-prefix {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: #F1F5F9;
+            color: #64748B;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: 900;
+            flex-shrink: 0;
+        }
+
+        .option-btn.selected {
+            background-color: var(--selected-color) !important;
+            border-color: var(--selected-color) !important;
+            border-bottom-color: var(--selected-shadow) !important;
+            color: #FFFFFF !important;
+        }
+
+        .option-btn.selected .option-prefix {
+            background: rgba(255, 255, 255, 0.3);
+            color: #FFF;
+        }
+
+        .option-btn.correct {
+            background-color: var(--correct-color) !important;
+            border-color: var(--correct-color) !important;
+            border-bottom-color: var(--correct-shadow) !important;
+            color: #FFFFFF !important;
+        }
+
+        .option-btn.correct .option-prefix { background: rgba(255, 255, 255, 0.3); color: #FFF; }
+
+        .option-btn.wrong {
+            background-color: var(--wrong-color) !important;
+            border-color: var(--wrong-color) !important;
+            border-bottom-color: var(--wrong-shadow) !important;
+            color: #FFFFFF !important;
+        }
+
+        .option-btn.wrong .option-prefix { background: rgba(255, 255, 255, 0.3); color: #FFF; }
+
+        .explanation-box {
+            display: none;
+            margin-top: 16px;
+            padding: 16px;
+            background: #F0FDF4;
+            border: 2px dashed #00C9A7;
+            border-radius: 16px;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .explanation-box.active { display: block; }
+
+        .explanation-title {
+            font-size: 0.98rem;
+            font-weight: 900;
+            color: #059669;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 8px;
+            border-bottom: 2px solid #A7F3D0;
+            padding-bottom: 4px;
+        }
+
+        .exp-section { margin-bottom: 6px; font-size: 0.9rem; line-height: 1.5; }
+        .exp-section strong { color: #065F46; }
+
+        .exp-options-list { list-style: none; margin: 4px 0; padding-left: 6px; }
+        .exp-options-list li { margin-bottom: 3px; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .shake-card {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        .submit-btn-container { text-align: center; margin: 10px 0 30px; }
+
+        .submit-btn {
+            background: linear-gradient(180deg, #FF7675 0%, #D63031 100%);
+            color: white;
+            font-size: 1.15rem;
+            font-weight: 900;
+            padding: 14px 34px;
+            border: none;
+            border-radius: 22px;
+            box-shadow: 0 7px 0 #B22222, 0 10px 18px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+        }
+
+        .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 9px 0 #B22222, 0 12px 22px rgba(0,0,0,0.25); }
+        .submit-btn:active { transform: translateY(3px); box-shadow: 0 4px 0 #B22222, 0 5px 8px rgba(0,0,0,0.2); }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.65);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-overlay.active { display: flex; animation: fadeIn 0.3s ease; }
+
+        .modal-card {
+            background: #FFF;
+            border-radius: 26px;
+            padding: 28px 18px;
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            border: 6px solid #FDCB6E;
+        }
+
+        .modal-icon { font-size: 3.5rem; margin-bottom: 6px; }
+        .modal-title { font-size: 1.4rem; font-weight: 900; color: #6C5CE7; margin-bottom: 6px; }
+        .score-display { font-size: 2.5rem; font-weight: 900; color: #00C9A7; margin: 8px 0; }
+        .feedback-text { font-size: 0.98rem; font-weight: 700; color: #2D3436; margin-bottom: 18px; line-height: 1.45; }
+
+        .modal-actions { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+
+        .modal-btn {
+            border: none;
+            padding: 10px 18px;
+            font-size: 0.92rem;
+            font-weight: 800;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: transform 0.15s;
+        }
+
+        .modal-btn:hover { transform: translateY(-2px); }
+        .btn-view-all { background: #00C9A7; color: #FFF; box-shadow: 0 4px 0 #00A352; }
+        .btn-view-wrong { background: #FF7675; color: #FFF; box-shadow: 0 4px 0 #D63031; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Advanced Topic Mastery Test: Chance & Nature</h1>
+            <div class="teacher-tag">Giáo viên tạo: Ms Ngoc Hai FTU</div>
+        </header>
+
+        <div class="stats-bar">
+            <span id="statsLabel">📝 Tiến độ hoàn thành bài thi</span>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <span id="progressText">0/50</span>
+        </div>
+
+        <div class="filter-bar" id="filterBar">
+            <button class="filter-btn active" id="btnFilterAll" onclick="filterQuestionsResult('all')">👁️ Xem toàn bộ bài thi (<span id="totalVisibleCount">50</span> câu)</button>
+            <button class="filter-btn" id="btnFilterWrong" onclick="filterQuestionsResult('wrong')">❌ Chỉ xem các câu làm sai (<span id="wrongCount">0</span>)</button>
+        </div>
+
+        <div id="quizContainer"></div>
+
+        <div class="submit-btn-container" id="submitContainer">
+            <button class="submit-btn" id="submitBtn">🎉 Nộp Bài & Chấm Điểm</button>
+        </div>
+    </div>
+
+    <!-- Modal Score Popup -->
+    <div class="modal-overlay" id="scoreModal">
+        <div class="modal-card">
+            <div class="modal-icon" id="modalIcon">🏆</div>
+            <div class="modal-title" id="modalTitle">Hoàn thành bài kiểm tra 50 câu!</div>
+            <div class="score-display" id="scoreDisplay">0/50</div>
+            <div class="feedback-text" id="feedbackText">Tuyệt vời!</div>
+            <div class="modal-actions">
+                <button class="modal-btn btn-view-wrong" onclick="reviewWrongAnswers()">🔍 Xem câu làm sai</button>
+                <button class="modal-btn btn-view-all" onclick="reviewAllAnswers()">📖 Xem toàn bộ lời giải chi tiết</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new AudioCtx();
+        }
+
+        function playSound(type) {
+            try {
+                initAudio();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+
+                if (type === 'correct') {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(1046.50, audioCtx.currentTime + 0.3);
+                    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.3);
+                } else if (type === 'wrong') {
+                    const now = audioCtx.currentTime;
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.setValueAtTime(250, now + 0.12);
+                    osc.frequency.setValueAtTime(200, now + 0.24);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(now + 0.4);
+                }
+            } catch (e) { console.log("Audio not supported"); }
+        }
+
+        const rawQuestionsData = [
+            // BÀI 1: CƠ BẢN (16 CÂU)
+            {
+                level: "easy",
+                levelLabel: "Bài 1: Cơ bản",
+                typeLabel: "Multiple Choice",
+                q: "I wish you the best of ______ with your upcoming university entrance exams!",
+                options: ["luck", "odds", "risk", "course"],
+                answer: "luck",
+                exp: {
+                    translations: ["A. luck (n): sự may mắn", "B. odds (n): tỷ lệ cược", "C. risk (n): rủi ro", "D. course (n): tiến trình"],
+                    sentenceTrans: "Tôi chúc bạn gặp nhiều may mắn nhất trong kỳ thi đại học sắp tới!",
+                    whyCorrect: "Chọn A vì cụm từ chuẩn 'wish sb luck' nghĩa là chúc ai đó gặp may mắn.",
+                    whyWrong: "B, C, D không kết hợp với 'wish sb' để chúc may mắn."
+                }
+            },
+            {
+                level: "easy",
+                levelLabel: "Bài 1: Cơ bản",
+                typeLabel: "Gap Fill",
+                q: "Grandma has always had <span class='gap-slot' id='gap-1'>[ ? ]</span> fingers; every flower she plants in the garden blooms beautifully.",
+                options: ["green", "natural", "second", "idle"],
+                answer: "green",
+                gapId: "gap-1",
+                exp: {
+                    translations: ["A. green (green fingers: có tài làm vườn)", "B. natural: tự nhiên", "C. second: thứ hai", "D. idle: nhàn rỗi"],
+                    sentenceTrans: "Bà ngoại luôn có mát tay làm vườn; bất kỳ bông hoa nào bà trồng trong vườn cũng nở rất đẹp.",
+                    whyCorrect: "Chọn A vì thành ngữ 'have green fingers' dùng để chỉ người giỏi trồng trọt, mát tay chăm sóc cây cối.",
+                    whyWrong: "B, C, D không đứng trong thành ngữ miêu tả khả năng trồng trọt."
+                }
+            },
+            {
+                level: "easy",
+                levelLabel: "Bài 1: Cơ bản",
+                typeLabel: "Multiple Choice",
+                q: "Don't jump into the deep swimming pool if you can't swim; don't push your ______!",
+                options: ["luck", "risk", "nature", "weather"],
+                answer: "luck",
+                exp: {
+                    translations: ["A. luck (push your luck: liều lĩnh quá mức)", "B. risk: rủi ro", "C. nature: tự nhiên", "D. weather: thời tiết"],
+                    sentenceTrans: "Đừng nhảy xuống hồ bơi sâu nếu bạn không biết bơi; đừng có mà liều lĩnh quá đà!",
+                    whyCorrect: "Chọn A vì collocations 'push your luck' có nghĩa là mạo hiểm, liều lĩnh quá mức dựa vào may mắn.",
+                    whyWrong: "B, C, D không đứng sau động từ 'push' tạo thành thành ngữ này."
+                }
+            },
+            {
+                level: "easy",
+                levelLabel: "Bài 1: Cơ bản",
+                typeLabel: "Gap Fill",
+                q: "It suddenly began to <span class='gap-slot' id='gap-2'>[ ? ]</span> with rain just as we arrived at the outdoor music festival.",
+                options: ["pour", "run", "pose", "take"],
+                answer: "pour",
+                gapId: "gap-2",
+                exp: {
+                    translations: ["A. pour (pour with rain: mưa như trút nước)", "B. run: chạy", "C. pose: đặt ra", "D. take: lấy"],
+                    sentenceTrans: "Trời đột nhiên bắt đầu mưa như trút nước ngay khi chúng tôi vừa đến lễ hội âm nhạc ngoài trời.",
+                    whyCorrect: "Chọn A vì cụm động từ 'pour with rain' mô tả thời tiết mưa rất to, trút nước.",
+                    whyWrong: "B, C, D không đi với 'with rain' chỉ mưa to."
+                }
+            },
+            {
+                level: "easy",
+                levelLabel: "Bài 1: Cơ bản",
+                typeLabel: "Multiple Choice",
+                q: "A severe earthquake is categorized as an act of ______, which human beings cannot control.",
+                options: ["God", "Draw", "Straw", "Course"],
+                answer: "God",
+                exp: {
+                    translations: ["A. God (an act of God: thiên tai/sức mạnh thiên nhiên)", "B. Draw: sự bốc thăm", "C. Straw: rơm rạ", "D. Course: tiến trình"],
+                    sentenceTrans: "Một trận động đất dữ dội được xếp vào loại sự kiện do thiên tai/chúa trời gây ra, điều mà con người không thể kiểm soát được.",
+                    whyCorrect: "Chọn A vì thành ngữ 'an act of God' dùng chỉ các thảm họa thiên nhiên lớn như lũ lụt, thiên tai ngoài tầm kiểm soát của con người.",
+                    whyWrong: "B, C, D không ghép thành cụm thành ngữ chỉ thiên tai."
+                }
+            },
+            {
+                level: "easy",
+                levelLabel: "Bài 1: Cơ bản",
+                typeLabel: "Gap Fill",
+                q: "I didn't prepare any notes for the presentation; I just decided to <span class='gap-slot' id='gap-3'>[ ? ]</span> to luck.",
+                options: ["trust", "risk", "wish", "bring"],
+                answer: "trust",
+                gapId: "gap-3",
+                exp: {
+                    translations: ["A. trust (trust to luck: trông chờ vào vận may)", "B. risk: liều", "C. wish: ước", "D. bring: mang"],
+                    sentenceTrans: "Tôi đã không chuẩn bị bất kỳ ghi chú nào cho bài thuyết trình; tôi chỉ quyết định trông chờ vào vận may.",
+                    whyCorrect: "Chọn A vì thành ngữ 'trust to luck' nghĩa là phó mặc cho số phận/vận may.",
+                    whyWrong: "B, C, D không đi cùng 'to luck' tạo thành cụm từ mang nghĩa phó mặc."
+                }
+            },
+            {
+                level: "easy",
+                levelLabel: "Bài 1: Cơ bản",
+                typeLabel: "Multiple Choice",
+                q: "I got caught in the ______ on my way back home because I forgot my umbrella.",
+                options: ["rain", "sun", "wind", "threat"],
+                answer: "rain",
+                exp: {
+                    translations: ["A. rain (caught in the rain: bị mắc mưa)", "B. sun: mặt trời", "C. wind: gió", "D. threat: mối đe dọa"],
+                    sentenceTrans: "Tôi đã bị mắc mưa trên đường về nhà vì quên mang theo ô.",
+                    whyCorrect: "Chọn A vì cụm từ 'caught in the rain' dùng để chỉ việc bị dính mưa bất ngờ trên đường.",
+                    whyWrong: "B, C, D không tạo thành cụm cố định chỉ việc bị dính mưa bất ngờ."
+                }
+            },
+            {
+                level: "easy",
+                levelLabel: "Bài 1: Cơ bản",
+                typeLabel: "Gap Fill",
+                q: "Always remember to wear sunscreen when sitting in the <span class='gap-slot' id='gap-4'>[ ? ]</span> to protect your skin.",
+                options: ["sun", "rain", "wind", "weather"],
+                answer: "sun",
+                gapId: "gap-4",
+                exp: {
+                    translations: ["A. sun (in the sun: dưới ánh nắng mặt trời)", "B. rain: mưa", "C. wind: gió", "D. weather: thời tiết"],
+                    sentenceTrans: "Hãy luôn nhớ bôi kem chống nắng khi ngồi dưới ánh nắng mặt trời để bảo vệ làn da của bạn.",
+                    whyCorrect: "Chọn A vì 'in the sun' có nghĩa là ngồi/ở ngoài nắng.",
+                    whyWrong: "B, C, D không đi với việc bôi kem chống nắng bảo vệ da."
+                }
+            },
+            {
+                level: "easy",
+                levelLabel: "Bài 1: Cơ bản",
+                typeLabel: "Multiple Choice",
+                q: "The news of her sudden promotion came out of the ______, completely shocking everyone in the office.",
+                options: ["blue", "straw", "sun", "course"],
+                answer: "blue",
+                exp: {
+                    translations: ["A. blue (out of the blue: hoàn toàn bất ngờ)", "B. straw: rơm rạ", "C. sun: mặt trời", "D. course: tiến trình"],
+                    sentenceTrans: "Tin tức về việc cô ấy đột ngột được thăng chức đến hoàn toàn bất ngờ, làm tất cả mọi người trong văn phòng sững sờ.",
+                    whyCorrect: "Chọn A vì thành ngữ 'out of the blue' nghĩa là xảy ra một cách bất ngờ, đột ngột không báo trước.",
+                    whyWrong: "B, C, D không ghép thành idioms này."
+                }
+            },
+            {
+                level: "easy",
+                levelLabel: "Bài 1: Cơ bản",
+                typeLabel: "Gap Fill",
+                q: "Before taking an exam, my grandmother always tells me to touch <span class='gap-slot' id='gap-5'>[ ? ]</span> for good luck.",
+                options: ["wood", "straw", "rain", "course"],
+                answer: "wood",
+                gapId: "gap-5",
+                exp: {
+                    translations: ["A. wood (touch wood: trộm vía/cầu may)", "B. straw: rơm", "C. rain: mưa", "D. course: tiến trình"],
+                    sentenceTrans: "Trước khi đi thi, bà tôi luôn bảo tôi chạm vào gỗ (trộm vía) để cầu mong may mắn.",
+                    whyCorrect: "Chọn A vì thành ngữ 'touch wood' (ở Anh) hoặc 'knock on wood' (ở Mỹ) dùng để xin may mắn hoặc tránh xui xẻo.",
+                    whyWrong: "B, C, D không ghép với động từ 'touch' trong ngữ cảnh cầu may."
+                }
+            },
+            {
+                level: "easy",
+                levelLabel: "Bài 1: Cơ bản",
+                typeLabel: "Multiple Choice",
+                q: "Rising global temperatures pose a serious ______ to coastal communities worldwide.",
+                options: ["threat", "luck", "odds", "draw"],
+                answer: "threat",
+                exp: {
+                    translations: ["A. threat (pose a threat to: đe dọa)", "B. luck: may mắn", "C. odds: cơ hội", "D. draw: bốc thăm"],
+                    sentenceTrans: "Nhiệt độ toàn cầu gia tăng đang đặt ra mối đe dọa nghiêm trọng đối với các cộng đồng vùng ven biển trên toàn thế giới.",
+                    whyCorrect: "Chọn A vì cụm từ 'pose a threat to' có nghĩa là gây ra/đặt ra mối đe dọa đối với.",
+                    whyWrong: "B, C, D không đi với cấu trúc 'pose a ... to'."
+                }
+            },
+            {
+                level: "easy",
+                levelLabel: "Bài 1: Cơ bản",
+                typeLabel: "Gap Fill",
+                q: "The sailor glanced at the sky to check the direction of the gust of <span class='gap-slot' id='gap-6'>[ ? ]</span>.",
+                options: ["wind", "rain", "sun", "luck"],
+                answer: "wind",
+                gapId: "gap-6",
+                exp: {
+                    translations: ["A. wind (gust of wind: cơn gió mạnh đột ngột)", "B. rain: mưa", "C. sun: mặt trời", "D. luck: may mắn"],
+                    sentenceTrans: "Người thủy thủ nhìn lướt lên bầu trời để kiểm tra hướng của cơn gió mạnh.",
+                    whyCorrect: "Chọn A vì cụm danh từ 'a gust of wind' chỉ một luồng gió/cơn gió thổi mạnh bất ngờ.",
+                    whyWrong: "B, C, D không dùng danh từ ghép với 'gust of'."
+                }
+            },
+            {
+                level: "easy",
+                levelLabel: "Bài 1: Cơ bản",
+                typeLabel: "Multiple Choice",
+                q: "I feel a bit under the ______ today, so I think I will stay in bed and rest.",
+                options: ["weather", "sun", "wind", "rain"],
+                answer: "weather",
+                exp: {
+                    translations: ["A. weather (under the weather: mệt mỏi/ốm nhẹ)", "B. sun: mặt trời", "C. wind: gió", "D. rain: mưa"],
+                    sentenceTrans: "Hôm nay tôi thấy hơi không được khỏe trong người, vì vậy tôi nghĩ mình sẽ nằm trên giường nghỉ ngơi.",
+                    whyCorrect: "Chọn A vì thành ngữ 'under the weather' dùng để diễn tả cảm giác bị ốm nhẹ, mệt mỏi.",
+                    whyWrong: "B, C, D không ghép với 'under the' để miêu tả sức khỏe."
+                }
+            },
+            {
+                level: "easy",
+                levelLabel: "Bài 1: Cơ bản",
+                typeLabel: "Gap Fill",
+                q: "It's totally <span class='gap-slot' id='gap-7'>[ ? ]</span> to feel nervous before delivering a public speech to thousands of people.",
+                options: ["natural", "risk", "freak", "idle"],
+                answer: "natural",
+                gapId: "gap-7",
+                exp: {
+                    translations: ["A. natural (adj): tự nhiên, bình thường", "B. risk: rủi ro", "C. freak: kỳ dị", "D. idle: nhàn rỗi"],
+                    sentenceTrans: "Hoàn toàn tự nhiên khi cảm thấy lo lắng trước khi phát biểu trước công chúng hàng ngàn người.",
+                    whyCorrect: "Chọn A vì cụm từ 'totally/completely natural' chỉ một phản ứng rất đỗi bình thường, tự nhiên.",
+                    whyWrong: "B, C, D sai nghĩa khi miêu tả cảm xúc con người."
+                }
+            },
+            {
+                level: "easy",
+                levelLabel: "Bài 1: Cơ bản",
+                typeLabel: "Multiple Choice",
+                q: "He is a very cautious investor; he would never ______ his life savings on a high-risk startup.",
+                options: ["risk", "wish", "trust", "pose"],
+                answer: "risk",
+                exp: {
+                    translations: ["A. risk (risk sth on: mạo hiểm cái gì vào)", "B. wish: ước", "C. trust: tin tưởng", "D. pose: đặt ra"],
+                    sentenceTrans: "Anh ấy là một nhà đầu tư rất thận trọng; anh ấy sẽ không bao giờ mạo hiểm toàn bộ tiền tiết kiệm cả đời vào một công ty khởi nghiệp nhiều rủi ro.",
+                    whyCorrect: "Chọn A vì cấu trúc 'risk sth on sth' nghĩa là đánh đổi/mạo hiểm cái gì vào việc gì.",
+                    whyWrong: "B, C, D không đi với cấu trúc 'risk sth on'."
+                }
+            },
+            {
+                level: "easy",
+                levelLabel: "Bài 1: Cơ bản",
+                typeLabel: "Gap Fill",
+                q: "We decided to go camping this weekend, come rain or <span class='gap-slot' id='gap-8'>[ ? ]</span>.",
+                options: ["shine", "sun", "wind", "weather"],
+                answer: "shine",
+                gapId: "gap-8",
+                exp: {
+                    translations: ["A. shine (come rain or shine: dù nắng hay mưa/dù có chuyện gì)", "B. sun: mặt trời", "C. wind: gió", "D. weather: thời tiết"],
+                    sentenceTrans: "Chúng tôi đã quyết định đi cắm trại vào cuối tuần này, dù nắng hay mưa.",
+                    whyCorrect: "Chọn A vì thành ngữ cố định 'come rain or shine' nghĩa là dù thời tiết thế nào hay dù bất cứ điều gì xảy ra.",
+                    whyWrong: "B, C, D không ghép chuẩn trong cặp câu thành ngữ này."
+                }
+            },
+
+            // BÀI 2: TRUNG BÌNH (17 CÂU)
+            {
+                level: "medium",
+                levelLabel: "Bài 2: Trung bình",
+                typeLabel: "Multiple Choice",
+                q: "The mountain climbers were caught in ______ weather and had to be rescued by helicopter.",
+                options: ["freak", "second", "idle", "short"],
+                answer: "freak",
+                exp: {
+                    translations: ["A. freak (freak weather: thời tiết dị thường/khác nghiệt bất ngờ)", "B. second: thứ hai", "C. idle: nhàn rỗi", "D. short: ngắn"],
+                    sentenceTrans: "Những người leo núi đã gặp phải thời tiết dị thường khắc nghiệt bất ngờ và phải được giải cứu bằng trực thuồng.",
+                    whyCorrect: "Chọn A vì cụm danh từ 'freak weather' miêu tả kiểu thời tiết bất thường, dị thường và nguy hiểm.",
+                    whyWrong: "B, C, D không ghép với 'weather' để chỉ thời tiết thất thường."
+                }
+            },
+            {
+                level: "medium",
+                levelLabel: "Bài 2: Trung bình",
+                typeLabel: "Gap Fill",
+                q: "Unfortunately, Paul drew the <span class='gap-slot' id='gap-9'>[ ? ]</span> straw and had to stay behind to clean up the messy office.",
+                options: ["short", "idle", "freak", "green"],
+                answer: "short",
+                gapId: "gap-9",
+                exp: {
+                    translations: ["A. short (draw the short straw: nhận phần việc xui xẻo/vô ơn)", "B. idle: nhàn rỗi", "C. freak: dị thường", "D. green: xanh"],
+                    sentenceTrans: "Thật không may, Paul đã phải nhận phần việc xui xẻo và phải ở lại để dọn dẹp văn phòng bừa bộn.",
+                    whyCorrect: "Chọn A vì thành ngữ 'draw the short straw' chỉ việc bị chọn làm một công việc không ai muốn làm.",
+                    whyWrong: "B, C, D không đi với tính từ ghép thành idioms này."
+                }
+            },
+            {
+                level: "medium",
+                levelLabel: "Bài 2: Trung bình",
+                typeLabel: "Multiple Choice",
+                q: "Since the factory closed down, many local workers have been down on their ______, struggling to pay rent.",
+                options: ["luck", "odds", "threat", "course"],
+                answer: "luck",
+                exp: {
+                    translations: ["A. luck (down on your luck: gặp vận xui/khó khăn tài chính)", "B. odds: tỷ lệ", "C. threat: mối đe dọa", "D. course: tiến trình"],
+                    sentenceTrans: "Kể từ khi nhà máy đóng cửa, nhiều công nhân địa phương đã gặp vận xui khó khăn, chật vật trả tiền thuê nhà.",
+                    whyCorrect: "Chọn A vì thành ngữ 'down on one's luck' diễn tả việc trải qua giai đoạn khó khăn về tiền bạc/công việc.",
+                    whyWrong: "B, C, D không đứng sau cụm 'down on one's'."
+                }
+            },
+            {
+                level: "medium",
+                levelLabel: "Bài 2: Trung bình",
+                typeLabel: "Gap Fill",
+                q: "It's just human <span class='gap-slot' id='gap-10'>[ ? ]</span> to worry about the unknown future.",
+                options: ["nature", "luck", "odds", "risk"],
+                answer: "nature",
+                gapId: "gap-10",
+                exp: {
+                    translations: ["A. nature (human nature: bản chất con người)", "B. luck: sự may mắn", "C. odds: tỷ lệ", "D. risk: rủi ro"],
+                    sentenceTrans: "Đó chỉ là bản chất tự nhiên của con người khi lo lắng về một tương lai chưa biết trước.",
+                    whyCorrect: "Chọn A vì cụm từ 'human nature' có nghĩa là bản chất/bản tính tự nhiên của con người.",
+                    whyWrong: "B, C, D không ghép thành cụm danh từ 'human nature'."
+                }
+            },
+            {
+                level: "medium",
+                levelLabel: "Bài 2: Trung bình",
+                typeLabel: "Multiple Choice",
+                q: "Against all the ______, the underdog team managed to defeat the reigning world champions in the final match.",
+                options: ["odds", "luck", "threats", "risks"],
+                answer: "odds",
+                exp: {
+                    translations: ["A. odds (against all the odds: vượt qua mọi nghịch cảnh/tỷ lệ cược)", "B. luck: may mắn", "C. threats: đe dọa", "D. risks: rủi ro"],
+                    sentenceTrans: "Vượt qua mọi tỷ lệ nghịch cảnh, đội bị đánh giá thấp hơn đã đánh bại thành công đương kim vô địch thế giới trong trận chung kết.",
+                    whyCorrect: "Chọn A vì thành ngữ 'against all the odds' dùng khi ai đó thành công dù tỷ lệ chiến thắng tưởng chừng như bằng không.",
+                    whyWrong: "B, C, D không tạo thành cụm thành ngữ chuẩn."
+                }
+            },
+            {
+                level: "medium",
+                levelLabel: "Bài 2: Trung bình",
+                typeLabel: "Gap Fill",
+                q: "There is no <span class='gap-slot' id='gap-11'>[ ? ]</span> or reason why the computer system suddenly crashed today.",
+                options: ["rhyme", "stroke", "gust", "threat"],
+                answer: "rhyme",
+                gapId: "gap-11",
+                exp: {
+                    translations: ["A. rhyme (no rhyme or reason: không có vần điệu hay lý do/không hiểu nổi)", "B. stroke: cú/đòn", "C. gust: cơn", "D. threat: mối đe dọa"],
+                    sentenceTrans: "Chẳng có lý do hay giải thích rõ ràng nào cho việc tại sao hệ thống máy tính lại đột ngột sập hôm nay.",
+                    whyCorrect: "Chọn A vì thành ngữ 'no rhyme or reason' có nghĩa là hoàn toàn không có lý do hoặc lời giải thích rõ ràng nào.",
+                    whyWrong: "B, C, D không đi cùng 'or reason'."
+                }
+            },
+            {
+                level: "medium",
+                levelLabel: "Bài 2: Trung bình",
+                typeLabel: "Multiple Choice",
+                q: "Winning the lottery on his birthday was a brilliant stroke of ______ that changed his life forever.",
+                options: ["luck", "nature", "risk", "weather"],
+                answer: "luck",
+                exp: {
+                    translations: ["A. luck (a stroke/piece of luck: vận may bất ngờ)", "B. nature: tự nhiên", "C. risk: rủi ro", "D. weather: thời tiết"],
+                    sentenceTrans: "Trúng số vào ngày sinh nhật là một vận may bất ngờ tuyệt vời đã thay đổi cuộc đời anh ấy mãi mãi.",
+                    whyCorrect: "Chọn A vì cụm từ 'a stroke of luck' chỉ một sự may mắn lớn diễn ra rất bất ngờ.",
+                    whyWrong: "B, C, D không ghép với 'a stroke of'."
+                }
+            },
+            {
+                level: "medium",
+                levelLabel: "Bài 2: Trung bình",
+                typeLabel: "Gap Fill",
+                q: "When taking care of a minor cold, it is often best to let nature take its <span class='gap-slot' id='gap-12'>[ ? ]</span> instead of taking unnecessary antibiotics.",
+                options: ["course", "straw", "odds", "threat"],
+                answer: "course",
+                gapId: "gap-12",
+                exp: {
+                    translations: ["A. course (let nature take its course: để tự nhiên phát triển theo tiến trình của nó)", "B. straw: rơm", "C. odds: tỷ lệ", "D. threat: mối đe dọa"],
+                    sentenceTrans: "Khi chăm sóc một cơn cảm nhẹ, tốt nhất là nên để cơ thể tự hồi phục tự nhiên thay vì uống kháng sinh không cần thiết.",
+                    whyCorrect: "Chọn A vì thành ngữ 'let nature take its course' có nghĩa là để mọi thứ phát triển tự nhiên không can thiệp.",
+                    whyWrong: "B, C, D không đứng trong thành ngữ này."
+                }
+            },
+            {
+                level: "medium",
+                levelLabel: "Bài 2: Trung bình",
+                typeLabel: "Multiple Choice",
+                q: "Living in a green countryside area for a few months became second ______ to her after years in the noisy city.",
+                options: ["nature", "luck", "weather", "wind"],
+                answer: "nature",
+                exp: {
+                    translations: ["A. nature (second nature: thói quen thứ hai/bản năng tự nhiên)", "B. luck: may mắn", "C. weather: thời tiết", "D. wind: gió"],
+                    sentenceTrans: "Sống ở vùng nông thôn xanh mát vài tháng đã trở thành bản năng tự nhiên đối với cô ấy sau nhiều năm ở thành phố ồn ào.",
+                    whyCorrect: "Chọn A vì cụm từ 'second nature' chỉ một hành động/thói quen trở nên tự nhiên và dễ dàng như bản năng.",
+                    whyWrong: "B, C, D không đi với 'second' để tạo thành idiom này."
+                }
+            },
+            {
+                level: "medium",
+                levelLabel: "Bài 2: Trung bình",
+                typeLabel: "Gap Fill",
+                q: "The political reform brought winds of <span class='gap-slot' id='gap-13'>[ ? ]</span> across the entire nation.",
+                options: ["change", "luck", "risk", "threat"],
+                answer: "change",
+                gapId: "gap-13",
+                exp: {
+                    translations: ["A. change (winds of change: luồng gió mới của sự thay đổi)", "B. luck: may mắn", "C. risk: rủi ro", "D. threat: đe dọa"],
+                    sentenceTrans: "Cuộc cải cách chính trị đã mang lại những làn gió thay đổi mới trên toàn quốc.",
+                    whyCorrect: "Chọn A vì ẩn dụ/cụm từ 'winds of change' dùng để miêu tả những sự kiện mang lại biến chuyển lớn tích cực.",
+                    whyWrong: "B, C, D không ghép với 'winds of'."
+                }
+            },
+            {
+                level: "medium",
+                levelLabel: "Bài 2: Trung bình",
+                typeLabel: "Multiple Choice",
+                q: "The odds are in ______ of the home team winning tonight because their star player has recovered.",
+                options: ["favour", "risk", "threat", "course"],
+                answer: "favour",
+                exp: {
+                    translations: ["A. favour (in favour of: nghiêng về/có lợi cho)", "B. risk: rủi ro", "C. threat: đe dọa", "D. course: tiến trình"],
+                    sentenceTrans: "Tỷ lệ chiến thắng đang nghiêng về phía đội chủ nhà tối nay vì cầu thủ ngôi sao của họ đã phục hồi.",
+                    whyCorrect: "Chọn A vì cụm từ 'the odds are in favour of sb' có nghĩa là khả năng thành công nghiêng về phía ai.",
+                    whyWrong: "B, C, D sai giới từ và cấu trúc kết hợp."
+                }
+            },
+            {
+                level: "medium",
+                levelLabel: "Bài 2: Trung bình",
+                typeLabel: "Gap Fill",
+                q: "By entering that unstable burning building, the brave firefighter was running the <span class='gap-slot' id='gap-14'>[ ? ]</span> of serious injuries.",
+                options: ["risk", "luck", "threat", "course"],
+                answer: "risk",
+                gapId: "gap-14",
+                exp: {
+                    translations: ["A. risk (run the risk of: đối mặt với rủi ro)", "B. luck: may mắn", "C. threat: đe dọa", "D. course: tiến trình"],
+                    sentenceTrans: "Bằng cách đi vào tòa nhà đang cháy không ổn định đó, người lính cứu hỏa dũng cảm đang đối mặt với rủi ro chấn thương nghiêm trọng.",
+                    whyCorrect: "Chọn A vì cấu trúc 'run the risk of sth/doing sth' có nghĩa là đặt bản thân vào nguy cơ/rủi ro gặp điều xấu.",
+                    whyWrong: "B, C, D không đi cùng động từ 'run the'."
+                }
+            },
+            {
+                level: "medium",
+                levelLabel: "Bài 2: Trung bình",
+                typeLabel: "Multiple Choice",
+                q: "The anonymous caller made an idle ______ to intimidate the company president, but nobody took it seriously.",
+                options: ["threat", "luck", "odds", "risk"],
+                answer: "threat",
+                exp: {
+                    translations: ["A. threat (idle threat: hăm dọa suông)", "B. luck: may mắn", "C. odds: tỷ lệ", "D. risk: rủi ro"],
+                    sentenceTrans: "Kẻ gọi điện ẩn danh đã đưa ra một lời hăm dọa suông nhằm đe dọa chủ tịch công ty, nhưng không ai coi trọng nó.",
+                    whyCorrect: "Chọn A vì cụm từ 'idle threat' miêu tả lời đe dọa suông không có khả năng thực hiện.",
+                    whyWrong: "B, C, D không kết hợp với tính từ 'idle'."
+                }
+            },
+            {
+                level: "medium",
+                levelLabel: "Bài 2: Trung bình",
+                typeLabel: "Gap Fill",
+                q: "We were lucky enough to get tickets for the concert, but which seat you get is just the luck of the <span class='gap-slot' id='gap-15'>[ ? ]</span>.",
+                options: ["draw", "straw", "course", "wind"],
+                answer: "draw",
+                gapId: "gap-15",
+                exp: {
+                    translations: ["A. draw (the luck of the draw: hên xui/may rủi do bốc thăm)", "B. straw: rơm", "C. course: tiến trình", "D. wind: gió"],
+                    sentenceTrans: "Chúng tôi đã may mắn mua được vé xem ca nhạc, nhưng vị trí ghế ngồi hoàn toàn là may rủi ngẫu nhiên.",
+                    whyCorrect: "Chọn A vì thành ngữ 'the luck of the draw' dùng để miêu tả kết quả hoàn toàn ngẫu nhiên do hên xui bốc thăm.",
+                    whyWrong: "B, C, D không đúng thành ngữ."
+                }
+            },
+            {
+                level: "medium",
+                levelLabel: "Bài 2: Trung bình",
+                typeLabel: "Multiple Choice",
+                q: "Look at the visual sign above. What notice is displayed in the park?",
+                options: [
+                    "Notice: Keep the park clean and protect natural greenery.",
+                    "Notice: You are allowed to litter anywhere in the park.",
+                    "Notice: The park is closed on weekends due to bad weather.",
+                    "Notice: Do not enter the park without buying a ticket."
+                ],
+                hasCustomVisual: "saleSign",
+                answer: "Notice: Keep the park clean and protect natural greenery.",
+                exp: {
+                    translations: [
+                        "A. Thông báo: Giữ công viên sạch sẻ và bảo vệ mảng xanh tự nhiên.",
+                        "B. Thông báo: Bạn được phép xả rác khắp nơi.",
+                        "C. Thông báo: Công viên đóng cửa cuối tuần do thời tiết xấu.",
+                        "D. Thông báo: Không vào công viên nếu không mua vé."
+                    ],
+                    sentenceTrans: "Nhìn vào biển thông báo được vẽ ở trên. Thông báo nào được hiển thị?",
+                    whyCorrect: "Chọn A vì thông báo trên biển thiết kế mô phỏng yêu cầu giữ vệ sinh môi trường bảo vệ cảnh quan tự nhiên.",
+                    whyWrong: "B, C, D giải thích sai nội dung biển thông báo."
+                }
+            },
+            {
+                level: "medium",
+                levelLabel: "Bài 2: Trung bình",
+                typeLabel: "Gap Fill",
+                q: "Look at the mobile notification above. What message was received?<br>Message: 'Weather warning: Severe thunderstorm with heavy rain and strong <span class='gap-slot' id='gap-16'>[ ? ]</span> expected tonight.'",
+                options: ["wind", "luck", "odds", "draw"],
+                hasCustomVisual: "phoneMessage",
+                answer: "wind",
+                gapId: "gap-16",
+                exp: {
+                    translations: ["A. wind (strong wind: gió mạnh)", "B. luck: may mắn", "C. odds: tỷ lệ", "D. draw: bốc thăm"],
+                    sentenceTrans: "Nhìn vào tin nhắn điện thoại ở trên. Cảnh báo thời tiết: Bão giông dữ dội kèm mưa to và gió mạnh dự kiến tối nay.",
+                    whyCorrect: "Chọn A vì cụm từ miêu tả hiện tượng thời tiết dông bão thường bao gồm 'heavy rain and strong wind' (mưa to và gió mạnh).",
+                    whyWrong: "B, C, D không phù hợp với ngữ cảnh cảnh báo dông bão."
+                }
+            },
+            {
+                level: "medium",
+                levelLabel: "Bài 2: Trung bình",
+                typeLabel: "Multiple Choice",
+                q: "Which word has the underlined part pronounced differently?",
+                options: ["c<u>au</u>se", "dr<u>aw</u>", "st<u>raw</u>", "l<u>au</u>gh"],
+                answer: "l<u>au</u>gh",
+                exp: {
+                    translations: ["A. cause /kɔːz/ (âm /ɔː/)", "B. draw /drɔː/ (âm /ɔː/)", "C. straw /strɔː/ (âm /ɔː/)", "D. laugh /lɑːf/ (âm /ɑː/)"],
+                    sentenceTrans: "Từ nào có phần gạch chân phát âm khác với các từ còn lại?",
+                    whyCorrect: "Chọn D vì 'laugh' gạch chân chữ 'au' được phát âm là /ɑː/, trong khi các từ còn lại phát âm là /ɔː/.",
+                    whyWrong: "A, B, C đều được phát âm là /ɔː/."
+                }
+            },
+
+            // BÀI 3: NÂNG CAO (17 CÂU)
+            {
+                level: "hard",
+                levelLabel: "Bài 3: Nâng cao",
+                typeLabel: "Multiple Choice",
+                q: "With any ______, we should arrive at the airport before the storm hits the city.",
+                options: ["luck", "odds", "threat", "draw"],
+                answer: "luck",
+                exp: {
+                    translations: ["A. luck (with any luck: nếu may mắn)", "B. odds: tỷ lệ", "C. threat: đe dọa", "D. draw: bốc thăm"],
+                    sentenceTrans: "Nếu có chút may mắn nào, chúng ta sẽ tới được sân bay trước khi cơn bão đổ bộ vào thành phố.",
+                    whyCorrect: "Chọn A vì cụm từ 'with any luck' dùng để hy vọng rằng điều gì đó sẽ diễn ra suôn sẻ theo đúng ý muốn.",
+                    whyWrong: "B, C, D không đi với 'with any'."
+                }
+            },
+            {
+                level: "hard",
+                levelLabel: "Bài 3: Nâng cao",
+                typeLabel: "Gap Fill",
+                q: "Species extinction caused by human activities is no longer considered a natural <span class='gap-slot' id='gap-17'>[ ? ]</span> process.",
+                options: ["selection", "draw", "stroke", "course"],
+                answer: "selection",
+                gapId: "gap-17",
+                exp: {
+                    translations: ["A. selection (natural selection: chọn lọc tự nhiên)", "B. draw: bốc thăm", "C. stroke: cú đòn", "D. course: tiến trình"],
+                    sentenceTrans: "Sự tuyệt chủng loài do các hoạt động con người gây ra không còn được coi là một quá trình chọn lọc tự nhiên nữa.",
+                    whyCorrect: "Chọn A vì thuật ngữ sinh học/tự nhiên 'natural selection' nghĩa là sự chọn lọc tự nhiên.",
+                    whyWrong: "B, C, D không đi với 'natural' để tạo thành thuật ngữ sinh học."
+                }
+            },
+            {
+                level: "hard",
+                levelLabel: "Bài 3: Nâng cao",
+                typeLabel: "Multiple Choice",
+                q: "The odds are ______ us completing the construction on schedule due to continuous heavy rain.",
+                options: ["against", "favour", "for", "with"],
+                answer: "against",
+                exp: {
+                    translations: ["A. against (the odds are against: bất lợi/không có khả năng thành công)", "B. favour: ủng hộ", "C. for: cho", "D. with: với"],
+                    sentenceTrans: "Khả năng hoàn thành việc xây dựng đúng tiến độ đang rất bất lợi cho chúng ta do mưa lớn liên tục.",
+                    whyCorrect: "Chọn A vì cụm 'the odds are against (sb/sth)' nghĩa là tình thế/khả năng đang chống lại/bất lợi cho ai đó.",
+                    whyWrong: "B, C, D trái ngược ý bất lợi do mưa lớn."
+                }
+            },
+            {
+                level: "hard",
+                levelLabel: "Bài 3: Nâng cao",
+                typeLabel: "Gap Fill",
+                q: "They chose to go sunbathing under the blazing afternoon sun, at the <span class='gap-slot' id='gap-18'>[ ? ]</span> of getting severe skin burns.",
+                options: ["risk", "threat", "course", "stroke"],
+                answer: "risk",
+                gapId: "gap-18",
+                exp: {
+                    translations: ["A. risk (at the risk of: chấp nhận rủi ro bị)", "B. threat: đe dọa", "C. course: tiến trình", "D. stroke: cú đánh"],
+                    sentenceTrans: "Họ chọn đi tắm nắng dưới ánh nắng chiều chói chang, chấp nhận rủi ro bị bỏng da nghiêm trọng.",
+                    whyCorrect: "Chọn A vì cụm từ 'at the risk of doing sth' nghĩa là chấp nhận nguy cơ/rủi ro làm gì nguy hiểm.",
+                    whyWrong: "B, C, D sai cụm giới từ cố định."
+                }
+            },
+            {
+                level: "hard",
+                levelLabel: "Bài 3: Nâng cao",
+                typeLabel: "Multiple Choice",
+                q: "He is facing a death ______ after testifying against the organized criminal gang.",
+                options: ["threat", "risk", "luck", "odds"],
+                answer: "threat",
+                exp: {
+                    translations: ["A. threat (death threat: lời đe dọa tính mạng/lời dọa giết)", "B. risk: rủi ro", "C. luck: may mắn", "D. odds: tỷ lệ"],
+                    sentenceTrans: "Anh ấy đang phải đối mặt với lời đe dọa tính mạng sau khi ra làm chứng chống lại băng nhóm tội phạm có tổ chức.",
+                    whyCorrect: "Chọn A vì cụm danh từ 'death threat' có nghĩa là lời đe dọa giết/đe dọa tính mạng.",
+                    whyWrong: "B, C, D không ghép với 'death' tạo thành danh từ chỉ sự đe dọa tính mạng."
+                }
+            },
+            {
+                level: "hard",
+                levelLabel: "Bài 3: Nâng cao",
+                typeLabel: "Gap Fill",
+                q: "The company spent millions making their smartphones <span class='gap-slot' id='gap-19'>[ ? ]</span> so they wouldn't break in heavy rain.",
+                options: ["weatherproof", "natural", "idle", "freak"],
+                answer: "weatherproof",
+                gapId: "gap-19",
+                exp: {
+                    translations: ["A. weatherproof (adj): chịu được thời tiết khắc nghiệt/chống nước bão", "B. natural: tự nhiên", "C. idle: nhàn rỗi", "D. freak: kỳ dị"],
+                    sentenceTrans: "Công ty đã chi hàng triệu đô để làm cho điện thoại thông minh của họ chịu được thời tiết khắc nghiệt để chúng không bị hỏng khi mưa lớn.",
+                    whyCorrect: "Chọn A vì tính từ 'weatherproof' nghĩa là được thiết kế chống chọi tốt với thời tiết mưa gió.",
+                    whyWrong: "B, C, D không miêu tả tính năng chống chịu thời tiết của thiết bị."
+                }
+            },
+            {
+                level: "hard",
+                levelLabel: "Bài 3: Nâng cao",
+                typeLabel: "Multiple Choice",
+                q: "Choose the sentence that is CLOSEST in meaning to: 'It was completely unexpected when he quit his job.'",
+                options: [
+                    "His decision to quit his job came completely out of the blue.",
+                    "His decision to quit his job was an act of God.",
+                    "His decision to quit his job brought winds of change.",
+                    "His decision to quit his job was a stroke of luck."
+                ],
+                answer: "His decision to quit his job came completely out of the blue.",
+                exp: {
+                    translations: [
+                        "A. Quyết định nghỉ việc của anh ấy hoàn toàn bất ngờ.",
+                        "B. Quyết định nghỉ việc của anh ấy là do thiên tai.",
+                        "C. Quyết định nghỉ việc của anh ấy mang lại luồng gió mới.",
+                        "D. Quyết định nghỉ việc của anh ấy là vận may."
+                    ],
+                    sentenceTrans: "Chọn câu đồng nghĩa với: 'Việc anh ấy nghỉ việc hoàn toàn nằm ngoài dự đoán.'",
+                    whyCorrect: "Chọn A vì thành ngữ 'come out of the blue' có nghĩa là diễn ra một cách hoàn toàn bất ngờ (unexpected).",
+                    whyWrong: "B, C, D sử dụng sai thành ngữ không mang nghĩa 'unexpected'."
+                }
+            },
+            {
+                level: "hard",
+                levelLabel: "Bài 3: Nâng cao",
+                typeLabel: "Gap Fill",
+                q: "As luck would have <span class='gap-slot' id='gap-20'>[ ? ]</span>, the bus arrived just as I ran to the bus stop.",
+                options: ["it", "so", "them", "which"],
+                answer: "it",
+                gapId: "gap-20",
+                exp: {
+                    translations: ["A. it (as luck would have it: may mắn làm sao/thật tình cờ)", "B. so", "C. them", "D. which"],
+                    sentenceTrans: "May mắn làm sao, chiếc xe buýt đã đến ngay lúc tôi chạy tới trạm dừng.",
+                    whyCorrect: "Chọn A vì cấu trúc idiom cố định là 'as luck would have it' (may mắn thay/thật tình cờ là).",
+                    whyWrong: "B, C, D sai từ cố định trong thành ngữ này."
+                }
+            },
+            {
+                level: "hard",
+                levelLabel: "Bài 3: Nâng cao",
+                typeLabel: "Multiple Choice",
+                q: "Find the mistake in the following sentence: 'If you don't take a coat, you <u>run the risk to catch</u> a cold.'",
+                options: ["run the risk to catch", "If you don't", "take a coat", "a cold"],
+                answer: "run the risk to catch",
+                exp: {
+                    translations: ["A. run the risk to catch (Sửa thành: 'run the risk of catching')", "B. If you don't", "C. take a coat", "D. a cold"],
+                    sentenceTrans: "Tìm lỗi sai trong câu: 'Nếu bạn không mang áo khoác, bạn có nguy cơ bị cảm lạnh.'",
+                    whyCorrect: "Chọn A vì cấu trúc chuẩn là 'run the risk of doing sth' chứ không dùng 'to-V'.",
+                    whyWrong: "B, C, D đều hoàn toàn đúng ngữ pháp."
+                }
+            },
+            {
+                level: "hard",
+                levelLabel: "Bài 3: Nâng cao",
+                typeLabel: "Gap Fill",
+                q: "We were in <span class='gap-slot' id='gap-21'>[ ? ]</span> because the last available table at the busy restaurant was offered to us.",
+                options: ["luck", "odds", "risk", "course"],
+                answer: "luck",
+                gapId: "gap-21",
+                exp: {
+                    translations: ["A. luck (in luck: may mắn)", "B. odds", "C. risk", "D. course"],
+                    sentenceTrans: "Chúng tôi đã gặp may vì bàn trống cuối cùng còn lại ở nhà hàng đông đúc đã được dành cho chúng tôi.",
+                    whyCorrect: "Chọn A vì cụm từ 'in luck' dùng khi ai đó gặp may mắn trong một tình huống cụ thể.",
+                    whyWrong: "B, C, D không đi với giới từ 'in' để chỉ việc gặp may."
+                }
+            },
+            {
+                level: "hard",
+                levelLabel: "Bài 3: Nâng cao",
+                typeLabel: "Multiple Choice",
+                q: "The odds are ______ 10 to 1 that the candidate will secure the majority of votes.",
+                options: ["that", "in", "for", "with"],
+                answer: "that",
+                exp: {
+                    translations: ["A. that (the odds are that...: rất có khả năng rằng)", "B. in", "C. for", "D. with"],
+                    sentenceTrans: "Rất có khả năng là ứng cử viên đó sẽ giành được phần lớn số phiếu bầu.",
+                    whyCorrect: "Chọn A vì cấu trúc 'the odds are (that) + clause' nghĩa là khả năng rất cao là việc gì sẽ xảy ra.",
+                    whyWrong: "B, C, D không đứng trước mệnh đề trong cấu trúc này."
+                }
+            },
+            {
+                level: "hard",
+                levelLabel: "Bài 3: Nâng cao",
+                typeLabel: "Gap Fill",
+                q: "She was warned that investing in unregulated crypto assets would put her wealth at <span class='gap-slot' id='gap-22'>[ ? ]</span>.",
+                options: ["risk", "threat", "luck", "odds"],
+                answer: "risk",
+                gapId: "gap-22",
+                exp: {
+                    translations: ["A. risk (put sth at risk: đẩy cái gì vào nguy cơ rủi ro)", "B. threat", "C. luck", "D. odds"],
+                    sentenceTrans: "Cô ấy đã được cảnh báo rằng đầu tư vào các tài sản tiền điện tử không được kiểm soát sẽ đẩy tài sản của cô ấy vào nguy cơ rủi ro.",
+                    whyCorrect: "Chọn A vì cụm thành ngữ 'put sth at risk' nghĩa là đe dọa/đẩy cái gì vào tình thế nguy hiểm.",
+                    whyWrong: "B, C, D không đi với 'put sth at'."
+                }
+            },
+            {
+                level: "hard",
+                levelLabel: "Bài 3: Nâng cao",
+                typeLabel: "Multiple Choice",
+                q: "Environmentalists are urging authorities to protect the country's natural ______ from industrial exploitation.",
+                options: ["resources", "causes", "abilities", "selection"],
+                answer: "resources",
+                exp: {
+                    translations: ["A. resources (natural resources: tài nguyên thiên nhiên)", "B. causes: nguyên nhân", "C. abilities: khả năng", "D. selection: sự chọn lọc"],
+                    sentenceTrans: "Các nhà hoạt động môi trường đang thúc giục các cơ quan chức năng bảo vệ tài nguyên thiên nhiên của quốc gia khỏi sự khai thác công nghiệp.",
+                    whyCorrect: "Chọn A vì cụm danh từ 'natural resources' có nghĩa là nguồn tài nguyên thiên nhiên.",
+                    whyWrong: "B, C, D không tạo thành cụm từ chỉ tài nguyên thiên nhiên."
+                }
+            },
+            {
+                level: "hard",
+                levelLabel: "Bài 3: Nâng cao",
+                typeLabel: "Gap Fill",
+                q: "In spite of facing severe bomb <span class='gap-slot' id='gap-23'>[ ? ]</span>, the brave team refused to abandon the mission.",
+                options: ["threats", "luck", "odds", "draws"],
+                answer: "threats",
+                gapId: "gap-23",
+                exp: {
+                    translations: ["A. threats (bomb threats: đe dọa đánh bom)", "B. luck", "C. odds", "D. draws"],
+                    sentenceTrans: "Mặc dù đối mặt với những đe dọa đánh bom nghiêm trọng, đội ngũ dũng cảm vẫn từ chối bỏ dở nhiệm vụ.",
+                    whyCorrect: "Chọn A vì cụm từ 'bomb threat' nghĩa là lời đe dọa đánh bom.",
+                    whyWrong: "B, C, D không ghép với 'bomb' tạo thành danh từ có nghĩa này."
+                }
+            },
+            {
+                level: "hard",
+                levelLabel: "Bài 3: Nâng cao",
+                typeLabel: "Multiple Choice",
+                q: "Which word has a different stress pattern from the others?",
+                options: ["n<u>atural</u>", "w<u>eatherproof</u>", "s<u>unlight</u>", "e<u>nvironment</u>"],
+                answer: "e<u>nvironment</u>",
+                exp: {
+                    translations: ["A. natural /ˈnætʃ.ər.əl/ (trọng âm 1)", "B. weatherproof /ˈweð.ə.pruːf/ (trọng âm 1)", "C. sunlight /ˈsʌn.laɪt/ (trọng âm 1)", "D. environment /ɪnˈvaɪ.rən.mənt/ (trọng âm 2)"],
+                    sentenceTrans: "Từ nào có trọng âm khác với các từ còn lại?",
+                    whyCorrect: "Chọn D vì 'environment' có trọng âm rơi vào âm tiết thứ 2, các từ còn lại trọng âm rơi vào âm tiết 1.",
+                    whyWrong: "A, B, C đều có trọng âm nằm ở âm tiết đầu tiên."
+                }
+            },
+            {
+                level: "hard",
+                levelLabel: "Bài 3: Nâng cao",
+                typeLabel: "Gap Fill",
+                q: "Look at the climate notice above. Fill in the blank:<br>'Extreme weather conditions pose a direct threat <span class='gap-slot' id='gap-24'>[ ? ]</span> agricultural production.'",
+                options: ["to", "for", "with", "at"],
+                answer: "to",
+                gapId: "gap-24",
+                exp: {
+                    translations: ["A. to (pose a threat to: đe dọa đến)", "B. for", "C. with", "D. at"],
+                    sentenceTrans: "Các điều kiện thời tiết cực đoan đặt ra mối đe dọa trực tiếp đối với sản xuất nông nghiệp.",
+                    whyCorrect: "Chọn A vì cấu trúc chuẩn của động từ là 'pose a threat to sth/sb'.",
+                    whyWrong: "B, C, D sai giới từ đi kèm với 'pose a threat'."
+                }
+            },
+            {
+                level: "hard",
+                levelLabel: "Bài 3: Nâng cao",
+                typeLabel: "Multiple Choice",
+                q: "Choose the sentence that is CLOSEST in meaning to: 'She managed to overcome all difficulties and succeed.'",
+                options: [
+                    "Against all the odds, she managed to succeed.",
+                    "Out of the blue, she managed to succeed.",
+                    "She drew the short straw and managed to succeed.",
+                    "She was under the weather and managed to succeed."
+                ],
+                answer: "Against all the odds, she managed to succeed.",
+                exp: {
+                    translations: [
+                        "A. Vượt qua mọi nghịch cảnh, cô ấy đã thành công.",
+                        "B. Hoàn toàn bất ngờ, cô ấy đã thành công.",
+                        "C. Cô ấy nhận phần việc xui xẻo và thành công.",
+                        "D. Cô ấy mệt mỏi và thành công."
+                    ],
+                    sentenceTrans: "Chọn câu đồng nghĩa: 'Cô ấy đã xoay xở vượt qua mọi khó khăn và thành công.'",
+                    whyCorrect: "Chọn A vì thành ngữ 'against all the odds' nghĩa là vượt qua mọi khó khăn nghịch cảnh tưởng chừng như không thể.",
+                    whyWrong: "B, C, D sử dụng sai thành ngữ với ngữ cảnh vượt khó."
+                }
+            }
+        ];
+
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        let userAnswers = {};
+        let shuffledQuestions = [];
+        let isSubmitted = false;
+
+        function renderQuiz() {
+            const container = document.getElementById('quizContainer');
+            container.innerHTML = '';
+            userAnswers = {};
+            isSubmitted = false;
+
+            const shuffledRaw = shuffleArray(rawQuestionsData);
+
+            shuffledQuestions = shuffledRaw.map((item, index) => {
+                const shuffledOpts = shuffleArray(item.options);
+                return {
+                    ...item,
+                    displayIndex: index + 1,
+                    shuffledOpts: shuffledOpts
+                };
+            });
+
+            shuffledQuestions.forEach((qData, qIndex) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `question-${qIndex}`;
+
+                const cardHeader = document.createElement('div');
+                cardHeader.className = 'card-header-badge';
+
+                const badgeGroup = document.createElement('div');
+                badgeGroup.className = 'badge-group';
+
+                const qNum = document.createElement('div');
+                qNum.className = 'question-number';
+                qNum.innerText = `Câu ${qIndex + 1} / ${shuffledQuestions.length}`;
+
+                const levelTag = document.createElement('div');
+                levelTag.className = `level-indicator level-${qData.level}`;
+                levelTag.innerText = qData.levelLabel;
+
+                const typeTag = document.createElement('div');
+                typeTag.className = 'type-badge';
+                typeTag.innerText = qData.typeLabel;
+
+                badgeGroup.appendChild(qNum);
+                badgeGroup.appendChild(levelTag);
+                badgeGroup.appendChild(typeTag);
+
+                const statusBadge = document.createElement('div');
+                statusBadge.className = 'status-badge';
+                statusBadge.id = `badge-${qIndex}`;
+
+                cardHeader.appendChild(badgeGroup);
+                cardHeader.appendChild(statusBadge);
+
+                let visualHtml = '';
+                if (qData.hasCustomVisual === 'saleSign') {
+                    visualHtml = `
+                        <div class="sale-sign-box">
+                            🌿 GREEN PARK COMMUNITY NOTICE 🌿<br>
+                            <span style="font-size:0.9rem; font-weight:800;">"Help Us Keep The Environment Clean & Preserve Natural Greenery!"</span>
+                        </div>
+                    `;
+                } else if (qData.hasCustomVisual === 'phoneMessage') {
+                    visualHtml = `
+                        <div class="phone-message-box">
+                            <div class="phone-icon">⛈️</div>
+                            <div class="phone-text">
+                                <strong>Weather Alert:</strong> "Severe thunderstorm expected tonight with heavy rainfall and destructive wind gusts."
+                            </div>
+                        </div>
+                    `;
+                }
+
+                const qText = document.createElement('div');
+                qText.className = 'question-text';
+                qText.innerHTML = visualHtml + qData.q;
+
+                const optsGrid = document.createElement('div');
+                optsGrid.className = 'options-grid';
+
+                const prefixes = ['A', 'B', 'C', 'D'];
+
+                qData.shuffledOpts.forEach((opt, optIdx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.id = `opt-${qIndex}-${optIdx}`;
+                    btn.onclick = () => handleSelectAnswer(qIndex, opt, btn, qData.gapId);
+
+                    const prefix = document.createElement('span');
+                    prefix.className = 'option-prefix';
+                    prefix.innerText = prefixes[optIdx];
+
+                    const textSpan = document.createElement('span');
+                    textSpan.innerHTML = opt;
+
+                    btn.appendChild(prefix);
+                    btn.appendChild(textSpan);
+                    optsGrid.appendChild(btn);
+                });
+
+                const expBox = document.createElement('div');
+                expBox.className = 'explanation-box';
+                expBox.id = `explanation-${qIndex}`;
+
+                expBox.innerHTML = `
+                    <div class="explanation-title">
+                        💡 PHẦN GIẢI THÍCH CHI TIẾT (Ms Ngoc Hai FTU)
+                    </div>
+                    <div class="exp-section">
+                        <strong>1. Phân tích từ vựng/ngữ pháp 4 đáp án:</strong>
+                        <ul class="exp-options-list">
+                            ${qData.exp.translations.map(t => `<li>${t}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <div class="exp-section">
+                        <strong>2. Dịch nghĩa toàn câu:</strong><br>
+                        <em>"${qData.exp.sentenceTrans}"</em>
+                    </div>
+                    <div class="exp-section">
+                        <strong>3. Tại sao chọn đáp án đúng?</strong><br>
+                        ${qData.exp.whyCorrect}
+                    </div>
+                    <div class="exp-section">
+                        <strong>4. Tại sao các đáp án còn lại chưa đúng?</strong><br>
+                        ${qData.exp.whyWrong}
+                    </div>
+                `;
+
+                card.appendChild(cardHeader);
+                card.appendChild(qText);
+                card.appendChild(optsGrid);
+                card.appendChild(expBox);
+                container.appendChild(card);
+            });
+
+            updateProgress();
+            updateTotalVisibleCount();
+        }
+
+        function handleSelectAnswer(qIndex, selectedOpt, btn, gapId) {
+            if (isSubmitted) return;
+
+            const card = document.getElementById(`question-${qIndex}`);
+            const buttons = card.querySelectorAll('.option-btn');
+
+            buttons.forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+
+            userAnswers[qIndex] = selectedOpt;
+
+            if (gapId) {
+                const gapElement = document.getElementById(gapId);
+                if (gapElement) {
+                    gapElement.innerText = selectedOpt;
+                }
+            }
+
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const answeredCount = Object.keys(userAnswers).length;
+            const total = shuffledQuestions.length;
+            const pct = (answeredCount / total) * 100;
+            document.getElementById('progressBar').style.width = `${pct}%`;
+            document.getElementById('progressText').innerText = `${answeredCount}/${total}`;
+        }
+
+        function updateTotalVisibleCount() {
+            const cards = document.querySelectorAll('.question-card:not(.hidden)');
+            document.getElementById('totalVisibleCount').innerText = cards.length;
+        }
+
+        document.getElementById('submitBtn').addEventListener('click', () => {
+            const total = shuffledQuestions.length;
+            const answeredCount = Object.keys(userAnswers).length;
+
+            if (answeredCount < total) {
+                const confirmSubmit = confirm(`Em mới hoàn thành ${answeredCount}/${total} câu. Em có chắc chắn muốn nộp bài để xem điểm không?`);
+                if (!confirmSubmit) return;
+            }
+
+            isSubmitted = true;
+            let score = 0;
+            let wrongCount = 0;
+
+            shuffledQuestions.forEach((qData, qIndex) => {
+                const card = document.getElementById(`question-${qIndex}`);
+                const buttons = card.querySelectorAll('.option-btn');
+                const expBox = document.getElementById(`explanation-${qIndex}`);
+                const badge = document.getElementById(`badge-${qIndex}`);
+                const userChoice = userAnswers[qIndex];
+
+                buttons.forEach(b => {
+                    b.classList.add('locked');
+                    b.style.cursor = 'default';
+                });
+
+                const isCorrect = (userChoice === qData.answer);
+
+                if (isCorrect) {
+                    score++;
+                    badge.className = 'status-badge correct';
+                    badge.innerText = '✓ ĐÚNG';
+                    card.dataset.result = 'correct';
+                } else {
+                    wrongCount++;
+                    badge.className = 'status-badge wrong';
+                    badge.innerText = '✗ SAI';
+                    card.dataset.result = 'wrong';
+                    card.classList.add('shake-card');
+                }
+
+                buttons.forEach(b => {
+                    b.classList.remove('selected');
+                    const textSpan = b.querySelector('span:last-child');
+                    if (textSpan.innerHTML.trim() === qData.answer || textSpan.innerText.trim() === qData.answer) {
+                        b.classList.add('correct');
+                    } else if ((textSpan.innerHTML.trim() === userChoice || textSpan.innerText.trim() === userChoice) && !isCorrect) {
+                        b.classList.add('wrong');
+                    }
+                });
+
+                expBox.classList.add('active');
+            });
+
+            if (score >= total * 0.7) {
+                playSound('correct');
+                confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+            } else {
+                playSound('wrong');
+            }
+
+            document.getElementById('wrongCount').innerText = wrongCount;
+            document.getElementById('filterBar').classList.add('active');
+            document.getElementById('statsLabel').innerText = '🎯 Kết quả kiểm tra';
+            document.getElementById('submitContainer').style.display = 'none';
+
+            document.getElementById('scoreDisplay').innerText = `${score}/${total}`;
+            let feedback = "";
+            let icon = "🏆";
+            if (score === total) {
+                feedback = "XUẤT SẮC TUYỆT ĐỐI! Em đã chinh phục thành công 50 câu chủ đề Chance & Nature! 👑✨";
+                icon = "🌟";
+            } else if (score >= total * 0.8) {
+                feedback = "RẤT TUYỆT VỜI! Vốn từ collocations & idioms của em rất vững chắc! 🎉";
+                icon = "🔥";
+            } else if (score >= total * 0.5) {
+                feedback = "KHÁ TỐT! Hãy bấm xem lại các câu làm sai để ghi nhớ chi tiết hơn nhé! 💪";
+                icon = "👏";
+            } else {
+                feedback = "CỐ GẮNG THÊM NHÉ! Hãy đọc kĩ từng câu phân tích giải thích của Ms Ngoc Hai FTU bên dưới để củng cố bài! 📚";
+                icon = "🌱";
+            }
+
+            document.getElementById('feedbackText').innerText = feedback;
+            document.getElementById('modalIcon').innerText = icon;
+            document.getElementById('scoreModal').classList.add('active');
+        });
+
+        function reviewWrongAnswers() {
+            document.getElementById('scoreModal').classList.remove('active');
+            filterQuestionsResult('wrong');
+        }
+
+        function reviewAllAnswers() {
+            document.getElementById('scoreModal').classList.remove('active');
+            filterQuestionsResult('all');
+        }
+
+        function filterQuestionsResult(type) {
+            const cards = document.querySelectorAll('.question-card');
+            const btnAll = document.getElementById('btnFilterAll');
+            const btnWrong = document.getElementById('btnFilterWrong');
+
+            if (type === 'wrong') {
+                btnWrong.classList.add('active');
+                btnAll.classList.remove('active');
+                cards.forEach(c => {
+                    if (c.dataset.result === 'wrong') {
+                        c.classList.remove('hidden');
+                    } else {
+                        c.classList.add('hidden');
+                    }
+                });
+            } else {
+                btnAll.classList.add('active');
+                btnWrong.classList.remove('active');
+                cards.forEach(c => c.classList.remove('hidden'));
+            }
+            updateTotalVisibleCount();
+        }
+
+        window.onload = () => {
+            renderQuiz();
+        };
+    </script>
+</body>
+</html>
